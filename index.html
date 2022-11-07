@@ -1,0 +1,132 @@
+<html>
+    <head>
+        <title>PyRegistration - {{PropertyName}}</title>
+        <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+        <link rel="stylesheet" href="./main1.css?s={{RandSeed}}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" />
+        <style>
+            :root {
+                --accent-color: {{AccentColor}};
+            }
+            .backgroundimage {
+                background-image: url({{BackgroundImage}});
+            }
+        </style>
+    </head>
+    <body>
+        <div class="backgroundimage"></div>
+        <div id="app">
+            <div class="Header shadow">
+                <h2>
+                    Player Registration - {{PropertyName}}
+                </h2>
+            </div>
+            <div class="Page shadow">
+                <div class="pane flex center menu">
+                    <a v-show="EmployeeName" href="#" v-on:click="ActiveView = 'RegistrationView'" v-bind:class="{active:(ActiveView == 'RegistrationView')}">Register</a>
+                    <a v-show="EmployeeName" href="#" v-on:click="ActiveView = 'ReprintView'" v-bind:class="{active:(ActiveView == 'ReprintView')}">Reprint</a>
+                
+
+                    <a v-show="EmployeeName" href="#" v-on:click="ActiveView = 'LogView'" v-bind:class="{active:(ActiveView == 'LogView')}">Log</a>
+                    <a v-show="EmployeeName" href="#" v-on:click="LogOut" >Log Out({{EmployeeName}})</a>
+                    <a v-show="EmployeeName">-</a>
+                    <a v-show="EmployeeName" href="#" v-on:click="APUpdate()">Refresh Active Players</a>
+                    <form v-on:submit="LogIn(EmployeePin)" v-on:submit.prevent="">
+                        <input type="number" id="pin" class="" v-show="!EmployeeName" href="#" placeholder="Pin" v-model="EmployeePin"  />
+                        <p id="field">Please fill out this field.</p>
+                        <a v-show="!EmployeeName" href="#" v-on:click="LogIn(EmployeePin)" >Log In</a>
+                    </form>
+                </div>
+            </div>
+            <div class="Page shadow">
+                <div class="RegistrationView pane flex">
+                    <div class="inputs RegistrationInputs">
+						
+                        <input type="text" id="fnt" name="fnt" v-model="Profile.First" placeholder="First" v-on:change="FetchReprintRecommendations()" autocomplete="off" v-bind:class="{'bg-red':isValidFirst == false}"/>
+                        <input type="text" v-model="Profile.Last" placeholder="Last" v-on:change="FetchReprintRecommendations()" autocomplete="off" v-bind:class="{'bg-red':isValidLast == false}" />
+                        <input type="date" v-model="Profile.DoB" placeholder="DoB" autocomplete="off" v-bind:class="{'bg-red':isValidDoB == false}"/>
+                        <input type="text" v-model="Profile.Address" placeholder="Address" autocomplete="off" v-bind:class="{'bg-red':isValidAddress == false}"/>
+                        <input type="text" v-model="Profile.City" placeholder="City" autocomplete="off" v-bind:class="{'bg-red':isValidCity == false}"/>
+                        <input type="text" v-model="Profile.State" placeholder="State" v-on:change="Profile.State = Profile.State.toUpperCase()" autocomplete="off" required v-bind:class="{'bg-red':isValidState == false}"/>
+                        <input type="text" v-model="Profile.Zip" placeholder="Zip" autocomplete="off" v-bind:class="{'bg-red':isValidZip == false}"/>
+                        <input type="text" v-model="Profile.Sex" placeholder="Sex" autocomplete="off" v-bind:class="{'bg-red':isValidSex == false}"/>
+                        <input type="text" v-model="Profile.RawScanData" placeholder="Raw Scan Data" autocomplete="off" v-bind:class="{'bg-red':isValidRawScanData == false}"/>
+                        <input type="text" v-model="Profile.Email" placeholder="Email" v-on:change="FetchReprintRecommendations()" autocomplete="off"  v-bind:class="{'bg-red':isValidEmail == false}"/>
+                        <input type="number" v-model="Profile.Phone" placeholder="Phone" v-on:change="FetchReprintRecommendations()" autocomplete="off" v-bind:class="{'bg-red':isValidPhone == false}"/>
+                        <input type="number" v-model="Profile.Pin" placeholder="Pin" autocomplete="off" v-bind:class="{'bg-red':isValidPin == false}" />
+						
+                    </div>
+                    <div class="inputs RegistrationConfirmations" v-show="AllowRegistrationButtons">
+                        <input type="submit" value="Reprint" class="bigBtn" v-show="ReprintRecommendations.length" v-on:click="ActiveView = 'ReprintView'" con/>
+                        <input type="submit" value="Register & Print" class="bigBtn" v-on:click="RegisterPlayer()"/>
+                        <input type="submit" value="Reset" class="bigBtn" v-on:click="ResetForm()"/>
+						
+                    </div>
+                </div>
+                <div class="ReprintView pane">
+                    <div class="winputs ">
+                        <table>
+                            <tr v-for="account in ReprintRecommendations" :key="account.AccountId">
+                                <td>
+                                    <p style="padding: 15px;">
+                                        <br/>
+                                        Account Id: {{account.MemberAccountId}}<br/>
+                                        Name: {{account.Firstname}} {{account.LastName}}<br/>
+                                        Phone: {{account.MemberMobilePhone}}<br/>
+                                        DoB: {{account.Birthday}}<br/>
+                                        Rank: {{account.Rank}}&nbsp;
+                                    </p>
+                                </td>
+                                <td>
+                                    <input type="button" value="🖨" v-on:click="ReprintCard(account)"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class=" pane">
+                    <div style="width: 100%;">
+                        <input type="button" v-on:click="LoadLogs" value="Refresh"/>
+                    </div>
+                    <div style="width: 100%;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Time</th>
+                                    <th>System</th>
+                                    <th>Event</th>
+                                    <th>Action</th>
+                                    <th>User</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="log in LoadedLogs">
+                                    <td>
+                                        <a href="#" v-bind:id="log._id" v-on:click="CopyLogId(log)">
+                                            <input type="button" value="Report" class="bg-red"/>
+                                        </a>
+                                    </td>
+                                    <td>{{log.Time}}</td>
+                                    <td>{{log.System}}</td>
+                                    <td>{{log.Event}}</td>
+                                    <td>{{log.Action}}</td>
+                                    <td>{{log.User}}</td>
+                                    <td>{{log.Data}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="./index1.js?s={{RandSeed}}"></script>
+</html>
