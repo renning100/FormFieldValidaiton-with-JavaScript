@@ -151,11 +151,13 @@ var app = new Vue( {
             let isValidPin = me.Profile.Pin.match(
                 /^[0-9]{1,6}$/
             );
-            if(!isValidEmail){
+            if(!isValidEmail&&!isValidPhone){
                 toastr.error("Not correct email.Try again");
                 me.isValidEmail = false;
+                me.isValidPhone=false;
             } else {
                 me.isValidEmail = true;
+                me.isValidPhone=true;
             }
             if(!isValidFirst){
                 toastr.error("Not correct First Name. Try again");
@@ -204,12 +206,6 @@ var app = new Vue( {
                 me.isValidZip = false;
             } else {
                 me.isValidZip = true;
-            }
-            if(!isValidPhone) {
-                toastr.error("Not correct Phone");
-                me.isValidPhone = false;
-            } else {
-                me.isValidPhone = true;
             }
             if(!isValidPin) {
                 toastr.error("Not correct Pin.");
